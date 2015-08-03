@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+    <xs:include schemaLocation="jeus-plan-common.xsd"/>
+
+    <xs:element name="jeus-deployment-plan" type="jeus-deployment-planType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                       [Description]: JEUS deployment plan 설정을 정의한다.
+                    ]]></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="jeus-deployment-planType">
+        <xs:sequence>
+            <xs:element name="descriptors" type="descriptorsType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                       [Description]: 복수의 descriptor 설정을 정의한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="descriptorsType">
+        <xs:sequence>
+            <xs:element name="descriptor" type="descriptorType" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                       [Description]: JEUS deployment plan을 적용할 deployment descriptor를 지정하고 그와 관계된 세부 설정을 정의한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="descriptorType">
+        <xs:sequence>
+            <xs:element name="uri" type="xs:token">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                       [Description]: JEUS deployment plan을 적용할 deployment descriptor의 URI를 명시한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="configurations" type="configurationsType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                       [Description]: 복수의 configuration 설정을 정의한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

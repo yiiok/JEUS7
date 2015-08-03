@@ -1,0 +1,34 @@
+9
+
+dir
+698
+svn://192.168.1.134/JEUS7/testenv/tags/fix3/setup/bin/SERVERHOME_bin
+svn://192.168.1.134/JEUS7
+
+
+
+2013-04-22T00:35:11.681161Z
+368
+taeju
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+7f48ebd0-a69d-4209-8a53-292b74657389
+
+unix
+dir
+
+win
+dir
+

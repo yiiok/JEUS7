@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:j2ee="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:include schemaLocation="jeus-common.xsd"/>
+    <xs:include schemaLocation="jeus-lpq.xsd"/>
+
+    <xs:element name="jms-client" type="jms-clientType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                    [Description]: JMS Client의 동작을 설정한다.
+                    ]]></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="jms-clientType">
+        <xs:sequence>
+            <xs:element name="jms-lpq" type="jms-lpqType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                    [Description]: JMS Client에서 사용할 local-persistent-queue를 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-lpqType">
+        <xs:sequence>
+            <xs:element name="lpq-agent" type="lpq-agentType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                    [Description]: JMS Client에서 사용할 local-persistent-queue의 동작에 대한 설정을 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="connection-factory" type="xs:string" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                    [Description]: 설정된 local-persistent-queue를 사용할 connection-factory를 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+

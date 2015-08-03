@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:include schemaLocation="jeus-common.xsd"/>
+
+
+    <xs:complexType name="session-cluster-configType">
+        <xs:sequence>
+            <xs:element name="using-session-cluster" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 기본적으로 제공되는 세션 클러스터와는 다른 scope의 application define session cluster의 사용 여부를 결정한다.
+                        JEUS에서는 Cluster를 설정하게 되면 클러스터에 디플로이 하는 애플리케이션은 내부적으로 세션 클러스터를 지원한다.
+                        이렇게 자동으로 제공 되는 클러스터의 경우 별도의 설정없이 간단히 이용이 가능하며, 클러스터에 포함된 서버들을 대상으로 애플리케이션 단위 세션 클러스터가 지원된다.
+                        이 설정은 별도로 application define scope의 세션 클러스터를 적용하고자 할 때 사용한다.
+                        이를 위해서는 애플리케이션에서 별도의 설정이 필요하다.
+                        [Value Description]: Boolean 타입이고, 기본값은 false이다.
+                        [Non-Dynamic]: 동적 변경이 불가능하다.
+                     ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element  name="session-clusters" type="session-clustersType" minOccurs="0" />
+
+            <xs:element name="common-cluster-config" type="session-router-configType" minOccurs="0" maxOccurs="1" >
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Application define scope 의 세션 클러스터링에 적용되는 공통적인 설정이다.
+                        개별적으로 세션 클러스터링 설정을 하게 되면 공통 설정은 무시되고 개별적인 설정을 따른다.
+                     ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+        </xs:sequence>
+
+    </xs:complexType>
+    <xs:complexType name="jeus-login-managerType">
+        <xs:sequence>
+            <xs:element name="primary" type="xs:token" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: JEUS 로그인 매니저의 primary 서버를 설정한다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="secondary" type="xs:token" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: JEUS 로그인 매니저의 secondary 서버를 설정한다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="session-clustersType">
+        <xs:sequence>
+            <xs:element name="session-cluster" type="session-clusterType" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: Application define scope의 개별  세션 클러스터들을 설정한다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="session-clusterType">
+        <xs:sequence>
+            <xs:element name="name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [ID]: ID
+                        [Description]: Application define scope 세션 클러스터의 고유한 이름을 설정한다.
+                                       이 이름은 도메인 내에서 유일해야 하며, 세션 클러스터를 구성할 때
+                                       고유한 식별자(ID)로 사용된다. 해당 식별자는 각 애플리케이션에서 지정한다.
+                        [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="cluster-config" type="session-router-configType" minOccurs="0" maxOccurs="1" />
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="session-router-configType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                    [Description]: 분산식 세션 클러스터링을 제공하는 서버에 관한 설정이다.
+                    Servlet/JSP에서 사용하는 HTTP 세션 클러스터링 및 SFSB(Stateful Session Bean)의 클러스터링을 위한 서비스이다.
+                    분산식 세션 클러스터링을 설정하면 해당 서버에 세션 클러스터링을 위한 세션 서버가 기동되며
+                    이들 서버들은 세션 클러스터링에 참여하는 다른 서버의 세션 서버와 통신하여
+                    장애가 발생한 경우에도 세션이 유지될 수 있도록 한다.
+            ]]></xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element  name="jeus-login-manager" type="jeus-login-managerType" minOccurs="0" >
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: jeus-login-manager의 Primary 서버와 Secondary서버를 설정한다.
+                        Cluster level에서 중복 로그인 방지를 위한 jeus-login-manager의 로그인 정보가 저장될 서버를 설정한다.
+                        [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reserved-thread-num" type="nonNegativeIntType" minOccurs="0" default="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 분산식 세션 서버로 들어온 요청을 처리하기 위한 Thread Pool에 대해 부가적인 설정을 한다.
+                        기본적으로 System Thread Pool(Threadpool.System)을 사용하지만 특별히 이 서비스를 위한 스레드를 미리 할당할 필요가 있을 경우에만 설정한다.
+                        여기에 설정한 값은 다른 서비스 들과 합산했을 때 System Thread Pool의 최댓값을 넘지 않도록 해야 한다.
+                        [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="connect-timeout" type="xs:long" minOccurs="0" default="5000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 웹 엔진에 존재하는 세션 서버 간의 소켓 커넥션을
+                            생성할 때 적용되는 Timeout값이다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="read-timeout" type="xs:long" minOccurs="0" default="20000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 웹 엔진에 존재하는 세션 서버 간의 통신에 적용되는
+                            Read Timeout값이다. 데이터를 보낸 후 응답을 설정한 시간만큼 기다리게 된다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="backup-level" type="backup-levelType" minOccurs="0" default="set">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 백업 세션 서버로 백업을 수행할 업데이트된 세션 객체가
+                            존재하는지를 검사할 때 적용할 검사 기준을 설정한다. 오직 웹 엔진에서만 필요하며 SFSB를 사용할 경우 이 값은 의미없다.
+                            [Non-Dynamic]: 백업 레벨은 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="failover-delay" type="xs:long" minOccurs="0" default="600">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 웹 엔진에 장애가 발생하였을때 해당 엔진을 제외한 나머지 엔진에서
+                            다시 클러스터링 연결을 맺을 Timeout값이다. 즉 이는 장애 상황에서 해당 엔진의 복구를
+                            기다리는 시간이다. 단위는 초이다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="restart-delay" type="xs:long" minOccurs="0" default="600">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 웹 엔진을 정상적으로 다운시켰을때 해당 엔진을 제외한 나머지 엔진에서
+                            다시 클러스터링 연결을 맺는 Timeout이다. 이는 재기동이 다운의 가장 많은 케이스이기 때문에
+                            해당 재기동에 대한 성능을 향상 시키기 위한 설정이다. 단위는 초이다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="file-db" type="fileDbType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 업데이트된 로컬 세션 객체를 백업하는 방법으로는
+                             백업 세션 서버에 백업하는 방법 외에 로컬 파일 시스템에
+                             백업하는 방법도 있다. 이 설정은 이와 같이 로컬 파일 시스템에
+                             업데이트된 세션 객체를 백업하는 방법을 제공한다. 실제 파일 백업은 jeus-web-dd.xml, domain.xml 속 서버설정 안의 <session-config><shared>의 설정에 따라서
+                             true일 경우 서버별로 수행되고, false일 경우 Deploy된 애플리케이션별로 수행된다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <default-element>false</default-element>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="backup-levelType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                    [Description]: 사용된 세션을 Remote 웹 엔진 또는 로컬 파일 DB에 백업하기 전에
+                        백업할 필요가 있는지를 확인하는 것이 필요하다. 이 설정은 백업의 필요성을 체크하는 기준을 정한다.
+                        기본적으로 사용된 세션이 Invalidate되었을 경우 설정한 기준에 관계없이 백업한다.
+            ]]></xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="set">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                                 [Description]: 해당 세션의 setAttribute/putValue/removeAttribute/removeValue 함수
+                                     호출이 발생한 경우에만 업데이트된 것으로 간주하여 해당 세션 객체를 백업한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="get">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                                [Description]: 해당 세션의 setAttribute/putValue/removeAttribute/removeValue/getAttribute/getValue 함수
+                                    호출이 발생한 경우에만 업데이트된 것으로 간주하여 해당 세션 객체를 백업한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="all">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                                [Description]: 사용된 세션은 조건 없이 모두 백업한다.
+                                    해당 세션 객체가 HttpServletRequest.getSession() API로 호출될 경우 업데이트된 것으로 간주하여 해당 세션 객체를 백업한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="fileDbType">
+        <xs:sequence>
+            <xs:element name="path" type="xs:token" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 백업 세션을 저장할 파일 이름을 지정한다(절대 경로).
+                            파일 백업은 jeus-web-dd.xml, domain.xml속 서버설정 안의 <session-config><shared> 설정에 따라서 true일 경우 "$(SERVER_HOME)/.workspace/session/distributed/<server_name>_1.fdb"이고,
+                            false일 경우 $(SERVER_HOME)/.workspace/session/distributed/<context_name>_1.fdb로 설정된다.
+                            [Non-Dynamic]: 기존 접근 파일의 내용을 참조하기 때문에 동적으로 변경할 수 없다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="passivation-timeout" type="xs:long" minOccurs="0" default="-1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 메모리에 존재하는 세션 객체를 일정시간 사용하지 않으면 삭제하고
+                            대신 File DB에 저장된 객체를 사용하게 하는 설정이다.
+                            [Value Description]: -1 또는 0이면 Passivation을 수행하지 않는다. 0보다 큰 시간을 설정하면
+                            지정된 시간 이상 사용하지 않는 메모리의 세션 객체는 passivation된다. 
+                            밀리세컨드 단위이고, 기본값은 -1이다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="min-hole" type="xs:int" minOccurs="0" default="100">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 일정시간 file-db를 운용하면 파일의 크기가 필요이상 커지게 된다.
+                            이 설정에 지정된 횟수 만큼 파일 I/O가 발생하면 File Packing을 수행하여 필요이상
+                            파일 크기가 늘어나는 것을 막는다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="packing-rate" type="fractionType" minOccurs="0" default="0.5">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                            [Description]: 일정시간 File DB를 운용하면 파일의 크기가 필요이상 커지게 된다.
+                            현재 세션 객체 개수 대비 file I/O 횟수가 지정된 Ratio를 넘어서면 File Packing을 수행하여 필요이상
+                            파일 크기가 늘어나는 것을 막는다.
+                            [Non-Dynamic]: 동적 변경이 불가능하다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

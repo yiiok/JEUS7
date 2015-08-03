@@ -1,0 +1,10 @@
+JarIndex-Version: 1.0
+
+workbydd.jar
+ejb
+ejb/interceptor
+ejb/interceptor/method
+ejb/interceptor/method/desc
+ejb/interceptor/method/desc/ejb
+ejb/interceptor/method/desc/ejb/workbydd
+
