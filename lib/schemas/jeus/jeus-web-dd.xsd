@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
         targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified"
         version="7.0">
@@ -144,7 +144,22 @@
             <xs:element name="file-caching" type="file-cachingType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                        [Description]: 이미지 파일과 HTML 파일과 같은 정적 자원의 Cache를 구성한다. Cache는 빈번한 요청 파일을 보조기억장치(예: 하드디스크) 대신에 메인 메모리에 임시로 저장하여 가져오는 것을 의미한다. 이 설정은 그러한 정적자원을 가져오는 것의 성능을 향상시킨다.
+                        [Description]: 이미지 파일과 HTML 파일과 같은 정적 자원에 대한 Cache를 구성한다.
+                        이 기능은 사용을 권장하지 않으며, WebtoB Cache 사용을 권장한다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="resource-servlet" type="resource-servletType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: JEUS에서 제공하는 Default Servlet에 관한 설정이다.
+                        servlet-mapping으로 매핑되지 않은 요청에 대해서 이 Servlet이 호출되며, 주로 Static 파일 서비스를 담당한다.
+                        <allow-indexing>, <deny-download>, <file-caching>은 Default Servlet에 관한 설정이다.
                     ]]></xs:documentation>
                     <xs:appinfo>
                         <metadata>
@@ -179,8 +194,8 @@
                     <xs:documentation><![CDATA[
                     [DEPRECATED]
                         [Description]: 해당 웹 컴포넌트가 웹 서비스이거나 웹 서비스 클라이언트를 포함하고 있을 때
-						웹 서비스의 Tie 및 웹 서비스 클라이언트의 Stub을 새로 생성하여 컴파일하지 않고 기존에 생성되어
-						웹 컴포넌트와 같이 설치된 클래스 파일을 사용할지 여부를 지정한다.
+                        웹 서비스의 Tie 및 웹 서비스 클라이언트의 Stub을 새로 생성하여 컴파일하지 않고 기존에 생성되어
+                        웹 컴포넌트와 같이 설치된 클래스 파일을 사용할지 여부를 지정한다.
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -191,11 +206,12 @@
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="webinf-first" type="xs:boolean" minOccurs="0" default="false">
+            <xs:element name="webinf-first" type="webinfFirstType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                         [Description]: 클래스를 로딩할 때 웹 애플리케이션에 지정된 클래스 패스 내에서 먼저 찾을 것인지 여부를 설정한다.
-                        true로 설정할 경우 중복된 클래스로 인한 ClassCastException을 주의해야 한다.
+                        true로 설정할 경우 중복된 클래스로 인한 ClassCastException을 주의해야 하며 
+                        <excluded-pacakge>로 예외 패키지, 클래스를 지정할 수 있다.
                     ]]></xs:documentation>
                     <xs:appinfo>
                         <metadata>
@@ -208,9 +224,9 @@
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                     [DEPRECATED]
-	                	[Description]: Repository에 저장된 JSP 리소스를 JSP 엔진에 제공하기 위해 provider-class를 지정한다.
-	                	JEUS v7.0부터는 더 이상 사용하지 않는다.
-                	]]></xs:documentation>
+                        [Description]: Repository에 저장된 JSP 리소스를 JSP 엔진에 제공하기 위해 provider-class를 지정한다.
+                        JEUS v7.0부터는 더 이상 사용하지 않는다.
+                    ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="properties" type="propertiesType" minOccurs="0">
@@ -251,7 +267,7 @@
                     </xs:appinfo>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="encoding" type="appEncodingType" minOccurs="0">
+            <xs:element name="encoding" type="webAppEncodingType" minOccurs="0">
                 <xs:annotation>
                     <xs:appinfo>
                         <metadata>
@@ -366,8 +382,8 @@
             <xs:element name="reload-timeout" type="xs:long" minOccurs="0" default="30000">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                    	    [Description]: Servlet Auto-Reload를 시도할 때 Timeout까지 대기할 시간을 지정한다. 단위는 밀리세컨드이다.
-                        	[Value Type Description]: 밀리세컨드 단위로 설정한다.
+                            [Description]: Servlet Auto-Reload를 시도할 때 Timeout까지 대기할 시간을 지정한다. 단위는 밀리세컨드이다.
+                            [Value Type Description]: 밀리세컨드 단위로 설정한다.
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -506,6 +522,27 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="resource-servletType">
+        <xs:sequence>
+            <xs:element name="sendfile-size-threshold" type="nonNegativeLongType" minOccurs="0" default="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Java NIO에서 제공하는 sendfile 매커니즘인 java.nio.channels.FileChannel.transferTo() 사용 여부를 결정한다.
+                        여기에 설정된 사이즈를 초과하는 파일에 대해서 HTTPS가 아니고 Java NIO를 사용하는 리스너인 경우 FileChannel.transferTo()를 사용한다.
+                        그렇지 않은 경우 이 설정이 있다고 하더라도 일반적인 파일 전송 방식을 사용한다.
+                        sendfile은 비교적 사이즈가 큰 파일에 대해 효과가 있다고 알려져 있으므로 1MB(1048576) 이상으로 설정할 것을 권장한다.
+                        참고로 JVM에 따라 FileChannel.transferTo()에서 OS의 sendfile 매커니즘을 구현하지 않았을 수도 있다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="role-mappingType">
         <xs:sequence>
             <xs:element name="role-permission" type="rolePermissionType" minOccurs="0" maxOccurs="unbounded">
@@ -543,9 +580,9 @@
             <xs:element name="provider-class" type="xs:string" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                	[Description]: JSP 리소스를 InputStream으로 제공하기 위해서 JspResourceProvider 
-                	인터페이스를 구현한 클래스를 지정한다.
-                	]]></xs:documentation>
+                    [Description]: JSP 리소스를 InputStream으로 제공하기 위해서 JspResourceProvider 
+                    인터페이스를 구현한 클래스를 지정한다.
+                    ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -663,7 +700,6 @@
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                         [Description]: Asynchronous Send을 사용하는 경우 서버 상에서 보내지 못하고 있는 메시지에 대한 타임아웃을 나타낸다.
-                        현재 각 메세지별로 타임아웃에 의해 취소하기 보다는 타임아웃이 발생한 서버 세션을 닫는 식으로 동작한다.
                         javax.websocket.WebSocketContainer.getDefaultAsyncSendTimeout()에서 리턴된다.
                         [Value Description]: 밀리세컨드 단위
                     ]]></xs:documentation>
@@ -691,6 +727,29 @@
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="batching-buffer-size" type="nonNegativeIntType" minOccurs="0" default="65536">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RemoteEndpoint.setBatchingAllowed()를 통해 batch send 기능을 사용할 때 설정한다.
+                        여기에 설정된 값보다 batching buffer에 쌓인 frame의 payload들의 크기가 커지는 경우 RemoteEndpoint.flushBatch()로 버퍼를 비운다.
+                        기본값은 64KB이다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="websocket-timeout-min-threads" type="nonNegativeIntType" minOccurs="0" default="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: WebSocket Container 내에서 발생하는 Timeout 처리를 하기 위한 Thread Pool의 최소 개수를 설정한다.
+                                       0이면 Timeout이 제대로 동작하지 않을 수 있으므로 항상 1 이상으로 설정해야 한다.
+                        [Value Description]: 양의 정수
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -707,14 +766,14 @@
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                     [Description]: Thread Pool에서 관리하는 스레드 수의 최댓값이다.
-                    [Default Value]: 기본값은 10개이다.
+                    [Default Value]: 기본값은 30개이다.
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="keep-alive-time" type="nonNegativeLongType" minOccurs="0" default="60000">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                    [Description]: Min 이하의 스레드에 대해서 설정된 시간 동안 사용되지 않는다면 자동적으로 Thread Pool에서 제거된다. 0이면 제거하지 않는다.
+                    [Description]: Min을 초과하는 스레드에 대해서 설정된 시간 동안 사용되지 않는다면 자동적으로 Thread Pool에서 제거된다. 0이면 제거하지 않는다.
                     [Default Value]: 기본값은 1분이다.
                     [Value Description]: 밀리세컨드 단위로 설정한다.
                     ]]></xs:documentation>
@@ -723,7 +782,7 @@
             <xs:element name="queue-size" type="nonNegativeIntType" minOccurs="0" default="4096">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                    [Description]: Thread Pool이 처리하는 업무 개체를 저장하는 Queue의 크기를 지정한다.
+                    [Description]: Thread Pool이 처리하는 Task를 저장하는 Queue의 크기를 지정한다.
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -762,6 +821,83 @@
                     <xs:documentation><![CDATA[
                         [Description]: WebSocket Container 환경 변수에 사용되는 값을 설정한다.
                     ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="requestURLMappingEncodingType">
+        <xs:sequence>
+            <xs:element name="servlet-path" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Servlet path를 지정한다. 형식은 servlet 표준에 따른 mapping을 따른다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="encoding" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 지정된 Servlet path에 적용할 Encoding을 지정한다. 지정된 encoding은 request parameter encoding에 사용된다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="webAppRequestEncodingType">
+        <xs:complexContent>
+            <xs:extension base="requestEncodingType">
+                <xs:sequence>
+                    <xs:element name="url-mapping" type="requestURLMappingEncodingType" minOccurs="0" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation><![CDATA[
+                                [Description]: Request URL에 따른 Request Parameter Encoding을 설정한다. <forced> 또는 <client-override> 설정이 지정되어 있다면
+                                이 설정은 무시된다. 여기에 지정되지 않은 servlet-path에 대한 Encoding은 <default>를 따르거나 <default> 설정이 없는 경우 ISO-8859-1이다.
+                            ]]></xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="webAppEncodingType">
+        <xs:sequence>
+            <xs:element name="request-encoding" type="webAppRequestEncodingType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: HTTP 요청을 읽을 때 적용할 Encoding을 지정한다.
+                                       Socket에서 읽은 byte array(query strings, application/x-www-form-urlencoded 형식의 body 등)를 파싱해서 String 객체로 만들 때 적용한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="response-encoding" type="encodingSubType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: HTTP Response header에 "Content-type: text/html; charset=XXX"의 "XXX" 부분을 설정할 때 사용한다.
+                                       JSP Page Encoding에도 적용한다.
+                                       컨테이너 내부적으로는 Servlet이 만든 String 객체를 버퍼에 저장하기 위해 byte array로 변환할 때 사용한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="webinfFirstType" mixed="true">
+        <xs:sequence>
+            <xs:element name="excluded-package" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클래스를 로딩할 때 동일한 클래스가 웹 애플리케이션 외에도 존재하여 충돌이 발생할 경우
+                        웹 애플리케이션에 지정된 클래스 패스 내에서 먼저 찾지 않도록 하기 위하여 패키지, 클래스를 설정한다.
+                        이 때, 동일한 클래스의 메소드 인자, 리턴 타입이 달라질 경우 deploy시나 실행시 정상동작을 하지 않을 수 있다.
+                        이러한 경우에는 웹 애플리케이션에 지정된 클래스 패스 내의 라이브러리를 직접 수정하여야 한다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>

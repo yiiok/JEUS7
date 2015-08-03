@@ -29,6 +29,7 @@
                     <name>http-server</name>
                     <listen-port>@@HTTP-PORT@@</listen-port>
                     <listen-address>@@BASE-ADDRESS@@</listen-address>
+                    <keep-alive-timeout>600000</keep-alive-timeout>
                 </listener>
                 <listener>
                     <name>jms</name>

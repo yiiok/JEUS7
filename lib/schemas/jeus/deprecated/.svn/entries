@@ -2,7 +2,7 @@
 
 dir
 698
-svn://192.168.1.134/JEUS7/testenv/tags/fix3/lib/schemas/jeus/deprecated
+svn://192.168.1.134/JEUS7/testenv/trunk/lib/schemas/jeus/deprecated
 svn://192.168.1.134/JEUS7
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2015-08-03T10:49:04.000000Z
+2015-08-03T10:59:08.000000Z
 39be21ba1fd703fbcf71d17d433ee3e4
 2012-12-17T12:22:12.440959Z
 258
@@ -66,7 +66,7 @@ file
 
 
 
-2015-08-03T10:49:04.000000Z
+2015-08-03T10:59:08.000000Z
 4e5b13875d52334cc9d5add1ba742243
 2012-12-17T12:22:12.440959Z
 258

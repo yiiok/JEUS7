@@ -2,7 +2,7 @@
 
 dir
 698
-svn://192.168.1.134/JEUS7/testenv/tags/fix3/derby/databases/UDDIDB
+svn://192.168.1.134/JEUS7/testenv/trunk/derby/databases/UDDIDB
 svn://192.168.1.134/JEUS7
 
 
@@ -38,7 +38,7 @@ file
 
 
 
-2015-08-03T10:49:01.000000Z
+2015-08-03T10:59:06.000000Z
 2a316d4a797d730ff225a8e424ca7a52
 2013-04-24T23:39:52.769090Z
 370

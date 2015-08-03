@@ -33,7 +33,7 @@ REM execute jeus with echo
 @echo on
 "%JAVA_HOME%\bin\java" %VM_OPTION% %SESSION_MEM% ^
 -Xbootclasspath/p:"%JEUS_HOME%\lib\system\extension.jar" ^
--classpath "%LAUNCHER_CLASSPATH%" ^
+-classpath "%BOOTSTRAP_CLASSPATH%" ^
 -Dsun.rmi.dgc.client.gcInterval=3600000 ^
 -Dsun.rmi.dgc.server.gcInterval=3600000 ^
 -Djeus.jvm.version=%VM_TYPE% ^
@@ -47,7 +47,7 @@ REM execute jeus with echo
 -Djeus.properties.replicate=jeus,java.util.logging,sun.rmi.dgc ^
 -Djava.net.preferIPv4Stack=true ^
 %JAVA_ARGS% ^
-jeus.launcher.ManagedServerLauncher %BOOT_PARAMETER% -domain @domain_name@ -server @server_name@
+jeus.server.ManagedServerLauncherBootstrapper %BOOT_PARAMETER% -domain @domain_name@ -server @server_name@
 @echo off
 
 ENDLOCAL

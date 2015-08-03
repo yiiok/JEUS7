@@ -23,7 +23,7 @@ REM execute jeus with echo
 "%JAVA_HOME%\bin\java" %VM_OPTION% %SESSION_MEM% ^
 -Dnodemanager ^
 -Xbootclasspath/p:"%JEUS_HOME%\lib\system\extension.jar" ^
--classpath "%NM_CLASSPATH%" ^
+-classpath "%BOOTSTRAP_CLASSPATH%" ^
 -Djeus.tool.webadmin.locale.language=%JEUS_LANG% ^
 -Djeus.jvm.version=%VM_TYPE% ^
 -Djeus.home="%JEUS_HOME%" ^
@@ -36,7 +36,7 @@ REM execute jeus with echo
 -Djeus.properties.replicate=jeus,java.util.logging,sun.rmi.dgc ^
 -Djava.net.preferIPv4Stack=true ^
 %JAVA_ARGS% ^
-jeus.nodemanager.JeusNodeManager %*
+jeus.server.NodemanagerBootstrapper %*
 @echo off
 
 ENDLOCAL

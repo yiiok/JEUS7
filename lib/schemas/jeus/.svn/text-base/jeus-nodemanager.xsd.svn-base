@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:element name="nodeManager" type="nodeManagerType"/>
+
+    <xs:complexType name="nodeManagerType">
+        <xs:all>
+            <xs:element name="useNodeManager" type="xs:boolean" minOccurs="1" maxOccurs="1" default="true">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니져의 사용여부를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="host" type="xs:string" minOccurs="1" maxOccurs="1" default="localhost">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니져가 동작하고 있는 host를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:positiveInteger" minOccurs="1" maxOccurs="1" default="7730">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니져가 동작하고 있는 port를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="serverMonitoringPeriod" type="xs:unsignedLong" minOccurs="1" maxOccurs="1" default="500">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서버의 상태를 체크할 때의 주기를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="serverAutoRestart" type="xs:boolean" minOccurs="1" maxOccurs="1" default="true">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서버가 이상종료되었을 시에, 서버를 재시작할지 여부를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="serverRestartTryCount" type="xs:positiveInteger" minOccurs="1" maxOccurs="1" default="5">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서버의 재시작 시도 횟수를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="serverRestartDurationTime" type="xs:unsignedLong" minOccurs="1" maxOccurs="1" default="120000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서버의 재시작시에 대기할 시간을 설정한다. 이 시간을 기다린 후에 노드매니져가
+                        서버로의 통신을 시도한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="serverRetryRestart" type="xs:boolean" minOccurs="1" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서버의 재시작에 실패했을 경우에, 다시 재시작 시도할지를 설정한다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="useSSLListener" type="xs:boolean" minOccurs="1" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: SSL 소켓 통신을 사용할지를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="keystoreFile" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: SSL 통신을 사용할 시에, keystore 파일의 위치를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="keystorePass" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: SSL 통신을 사용할 시에, keystore의 password를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="truststoreFile" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: SSL 통신을 사용할 시에, truststore 파일의 위치를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="truststorePass" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: SSL 통신을 사용할 시에, truststore의 password를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="logFileName" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드 매니져의 로그 파일 이름(경로 포함 가능)을 설정한다. 기본 값으로는 노드 매니저 홈의 logs/JeusNodeManager.log가 된다.
+                        [Basic]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="standbyPort" type="xs:positiveInteger" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드 매니져의 standby 프로세스의 연결 포트를 설정한다.
+                        standby 프로세스는 노드 매니져의 에러 발생시에 노드 매니져를 대체하여 구동하도록 대기하고 있는 프로세스이다.
+                        포트를 설정하지 않으면 사용하지 않는것으로 간주한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="processList" minOccurs="0">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="rqs" type="rqs" minOccurs="0" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation><![CDATA[
+                                    [Description]: 노드 매니져가 관리할 RQS 프로세스에 대한 정보를 설정한다.
+                                    [Advance]
+                                ]]></xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="rqs">
+        <xs:all>
+            <xs:element name="domainName" type="xs:string" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+                <xs:documentation><![CDATA[
+                        [Description]: ᅟRQS의 도메인 이름을 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+            </xs:annotation>
+            </xs:element>
+            <xs:element name="processName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS의 이름을 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="path" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS의 실행 파일을 지정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:positiveInteger" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS의 상태를 체크할 때에 사용할 포트를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="option" type="xs:string" minOccurs="0" default="">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS 실행시에 필요한 argument를 설정할 수 있다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="rqsdir" type="xs:string"  minOccurs="0" default="">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS의 시작에 필요한 RQSDIR을 설정해줄 수 있다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="retryCount" type="xs:positiveInteger" minOccurs="0" default="5">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS의 상태 체크에 실패하였을 경우, 재상태 체크 횟수를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="monitoringPeriod" type="xs:unsignedLong" minOccurs="0" default="500">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: RQS의 상태를 체크할 때에 몇 millisecond 단위로 체크할 지를 설정한다.
+                        [Advance]
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+</xs:schema>

@@ -15,11 +15,9 @@
             <xs:element name="using-session-cluster" type="xs:boolean" default="false">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                        [Description]: 기본적으로 제공되는 세션 클러스터와는 다른 scope의 application define session cluster의 사용 여부를 결정한다.
-                        JEUS에서는 Cluster를 설정하게 되면 클러스터에 디플로이 하는 애플리케이션은 내부적으로 세션 클러스터를 지원한다.
-                        이렇게 자동으로 제공 되는 클러스터의 경우 별도의 설정없이 간단히 이용이 가능하며, 클러스터에 포함된 서버들을 대상으로 애플리케이션 단위 세션 클러스터가 지원된다.
-                        이 설정은 별도로 application define scope의 세션 클러스터를 적용하고자 할 때 사용한다.
-                        이를 위해서는 애플리케이션에서 별도의 설정이 필요하다.
+                        [Description]: 제우스에서 제공하는 Cluster의 Scope와 Session Cluster의 Scope을 동일하게 사용하는지 여부에 대한 설정
+                        Cluster에 Deploy되는 application이 내부적으로 자동으로 Session Clustering을 지원한다.
+                        별도의 설정없이 간단하게 이용가능하다. false 설정시 session cluster는 사용되지 않으며, domain의 clusters의 설정 만을 따른다.
                         [Value Description]: Boolean 타입이고, 기본값은 false이다.
                         [Non-Dynamic]: 동적 변경이 불가능하다.
                      ]]></xs:documentation>
@@ -31,8 +29,8 @@
             <xs:element name="common-cluster-config" type="session-router-configType" minOccurs="0" maxOccurs="1" >
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                        [Description]: Application define scope 의 세션 클러스터링에 적용되는 공통적인 설정이다.
-                        개별적으로 세션 클러스터링 설정을 하게 되면 공통 설정은 무시되고 개별적인 설정을 따른다.
+                        [Description]: Session Cluster에 적용되는 공통적인 설정이다.
+                        내부 Session Cluster의 설정에 설정이 있다면 여기있는 설정은 무시되며 해당 설정을 따른다.
                      ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
@@ -65,7 +63,7 @@
             <xs:element name="session-cluster" type="session-clusterType" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                            [Description]: Application define scope의 개별  세션 클러스터들을 설정한다.
+                            [Description]: 세션 클러스터들을 설정한다.
                             [Non-Dynamic]: 동적 변경이 불가능하다.
                     ]]></xs:documentation>
                 </xs:annotation>
@@ -77,10 +75,14 @@
             <xs:element name="name" type="valuableToken">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
-                        [ID]: ID
+                        [Description]: 세션 클러스터의 고유한 이름을 설정한다. 이 이름은 도메인 내에서 유일해야 하며, 세션 클러스터를 구성할 때
+                        고유한 식별자(ID)로 사용된다. 해당 식별자는 각 어플리케이션에서 지정한다.
                         [Description]: Application define scope 세션 클러스터의 고유한 이름을 설정한다.
                                        이 이름은 도메인 내에서 유일해야 하며, 세션 클러스터를 구성할 때
                                        고유한 식별자(ID)로 사용된다. 해당 식별자는 각 애플리케이션에서 지정한다.
+                                       같은 세션 클러스터에 포함된 어플리케이션들은 쿠키 공유를 위해 공통된 URL 을 포함하여야 하며,
+                                       해당 URL을 쿠키 Path에 설정하여야 한다.
+
                         [Non-Dynamic]: 동적 변경이 불가능하다.
                     ]]></xs:documentation>
                 </xs:annotation>
@@ -98,6 +100,7 @@
                     분산식 세션 클러스터링을 설정하면 해당 서버에 세션 클러스터링을 위한 세션 서버가 기동되며
                     이들 서버들은 세션 클러스터링에 참여하는 다른 서버의 세션 서버와 통신하여
                     장애가 발생한 경우에도 세션이 유지될 수 있도록 한다.
+                    [Non-Dynamic]: 동적 변경이 불가능하다.
             ]]></xs:documentation>
         </xs:annotation>
         <xs:sequence>
@@ -216,6 +219,7 @@
                     [Description]: 사용된 세션을 Remote 웹 엔진 또는 로컬 파일 DB에 백업하기 전에
                         백업할 필요가 있는지를 확인하는 것이 필요하다. 이 설정은 백업의 필요성을 체크하는 기준을 정한다.
                         기본적으로 사용된 세션이 Invalidate되었을 경우 설정한 기준에 관계없이 백업한다.
+                    [Non-Dynamic]: 동적 변경이 불가능하다.
             ]]></xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">

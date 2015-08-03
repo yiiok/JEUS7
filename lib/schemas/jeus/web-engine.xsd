@@ -186,7 +186,7 @@
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                         [Description]: URL 공격시 사용하는 패턴에 대해서 원천 차단한다. 단, Query String에 포함된 패턴은 체크하지 않는다.
-                        설정하지 않을 경우 기존 동작 유지를 위해서 URL Encoded 패턴은 %00, %23, %2e, %2f, %5c, Decoded 패턴은 #에 대해서 차단한다.
+                        설정하지 않을 경우 기존 동작 유지를 위해서 URL Encoded 패턴은 %00, %23, %2e, %2f, %5c, Decoded 패턴은 #, \에 대해서 차단한다.
                         대소문자는 구분하지 않으며, 모두 소문자로 변경해서 처리한다.
                         차단된 응답은 404로 처리되며, <default-error-page>에 설정된 파일 컨텐츠를 내보낸다.
                         <default-error-page> 설정이 없으면 내장된 컨텐츠를 내보낸다.
@@ -253,11 +253,12 @@
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                         [Description]: DNS 이름(예, "www.foo.com") 또는 IP 주소를 포함한다.
-                                       DNS 이름과 IP 주소들은 웹 엔진 내에서 유일해야 한다.
+                        필요에 따라서는 TCP 포트를 기술할 수 있다. (예, "www.foo.com:8088")
+                        여기에 기술된 문자열은 웹 엔진 내에서 유일해야 한다.
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="encoding" type="appEncodingType" minOccurs="0">
+            <xs:element name="encoding" type="webContainerEncodingType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation><![CDATA[
                         [Description]: 웹 애플리케이션의 요청이나 응답을 처리할 때 사용되는 Encoding을 설정한다.
@@ -570,10 +571,10 @@
                     <xs:element name="use-nio" type="xs:boolean" minOccurs="0" default="false">
                         <xs:annotation>
                             <xs:documentation><![CDATA[
-                            [Description]: Java NIO Selector 기반으로 WJP 메시지를 처리한다.
-                            이 옵션을 사용할 경우 좀더 효율적인 스레드 사용이 가능하다.
-                            WebtoB와의 커넥션 수보다 더 적은 수의 스레드로 WebtoB로부터의 요청을 처리할 수 있다.
-                            이 값이 true일 경우 <thread-pool> 대신 <nio-thread-pool>을 사용하는 것을 권장한다.
+                            [Description]: Java NIO Selector 기반으로 WJP 메시지를 처리하는 기능이다.
+                            그러나 이 옵션은 실험적인 기능이므로 사용을 권장하지 않는다.
+                            WebtoB Connector의 경우 WebtoB의 PHPS처럼 WebtoB의 Worker 개념으로 동작하는 것으로,
+                            JEUS 상의 쓰레드들이 WebtoB와 1:1로 연결을 맺어서 동작한다. 이러한 구조에 따라 WebtoB Connector는 Java NIO가 불필요하다.
                         ]]></xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -581,7 +582,6 @@
                         <xs:annotation>
                             <xs:documentation><![CDATA[
                         [Description]: WebtoB Connector에서 요청을 받아 처리할 Thread Pool을 설정한다.
-                        <use-nio>가 true일 경우 <min>과 <max>가 같은 Thread Pool을 사용한다.
                         ]]></xs:documentation>
                         </xs:annotation>
                     </xs:element>
@@ -613,7 +613,6 @@
                             WebtoB와 JEUS 사이에 방화벽이 있을 경우, WebtoB가 보내는 Ping 메시지 도착 여부를 이 설정으로 체크할 수 있다.
                             기본적으로 WebtoB의 svrchktime값보다 크게 설정되어야 한다.
                             0보다 크고 1초보다 작은 값으로 설정되어 있으면 무조건 1초로 가정한다.
-                            만약 use-nio가 true일 경우에는 Java NIO Selector의 select timeout을 결정할 때 이 값을 참조한다.
                             -1일 경우에는 OS의 설정을 따른다.
                             [Value Description]: 밀리세컨드
                             [Defined Value]: [0] (무한대)
@@ -705,6 +704,23 @@
                             이값을 너무 크게 잡으면 커널 메모리가 부족해서 소켓 생성이 되지 않을 수 있으므로 주의한다.
                             [Value Description]: 바이트
                         ]]></xs:documentation>
+                            <xs:appinfo>
+                                <metadata>
+                                    <element-level>ADVANCED</element-level>
+                                </metadata>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="compression" type="compression-Type" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation><![CDATA[
+                            [Description]: 응답을 압축할 대상을 결정하는 설정이다.
+                            압축할 MIME-Type을 설정하며, Servlet이 세팅한 Content-Type 헤더값과 매칭한다.
+                            해당되는 응답은 클라이언트로 전송되기 전에 gzip을 사용해서 압축된다.
+                            MIME-Type 갯수에 제한은 없으나 반드시 1개 이상을 설정해야 한다.
+                            압축 기능은 Accept-Encoding 요청 헤더에 gzip이 있을 때만 적용된다.
+                            또한 output-buffer-size가 0일 때는 적용되지 않는다.
+                            ]]></xs:documentation>
                             <xs:appinfo>
                                 <metadata>
                                     <element-level>ADVANCED</element-level>
@@ -974,7 +990,7 @@
                     <xs:element name="use-nio" type="xs:boolean" minOccurs="0" default="false">
                         <xs:annotation>
                             <xs:documentation><![CDATA[
-                                [Description]: Tmax Listener에서 NIO 방식의 통신을 사용할지 여부를 설정한다.
+                                [Description]: 더이상 지원하지 않는다.
                             ]]></xs:documentation>
                             <xs:appinfo>
                                 <metadata>
@@ -986,8 +1002,7 @@
                     <xs:element name="selector-count" type="nonNegativeIntType" minOccurs="0" default="1">
                         <xs:annotation>
                             <xs:documentation><![CDATA[
-                                [Description]: NIO Listener를 사용할 경우 Selector의 개수를 설정한다.
-                                [Value Description]: 기본으로 1로 설정되며, 커넥션 수가 많을 경우 이 값을 늘리면 성능이 향상될 수 있다.
+                                [Description]: 더이상 지원하지 않는다.
                             ]]></xs:documentation>
                             <xs:appinfo>
                                 <metadata>
@@ -1071,7 +1086,8 @@
                     <xs:element name="server-listener-ref" type="valuableToken">
                         <xs:annotation>
                             <xs:documentation><![CDATA[
-                                [Description]: Listener가 참조하는 서버의 Listener를 설정한다.
+                                [Description]: AJP13 Listener가 참조하는 서버 리스너를 설정한다.
+                                               서버 리스너의 use-nio 설정은 false로 권장한다.
                                                "BASE" Listener를 선택할 수 없다.
                             ]]></xs:documentation>
                         </xs:annotation>
@@ -1079,11 +1095,11 @@
                     <xs:element name="thread-pool" type="thread-poolType">
                         <xs:annotation>
                             <xs:documentation><![CDATA[
-                        [Description]: AJP13 Web Listener에서 요청을 받아 처리할 Thread Pool을 설정한다.
+                                [Description]: AJP13 Listener에서 요청을 받아 처리할 Thread Pool을 설정한다.
                     ]]></xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="read-timeout" type="nonNegativeLongType" minOccurs="0" default="0">
+                    <xs:element name="read-timeout" type="nonNegativeLongType" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation><![CDATA[
                                 [Description]: 이 설정값은 더이상 사용하지 않는다.
@@ -1205,6 +1221,23 @@
                                                Server Access Control의 설정값이 true일 경우에만 사용되고,
                                                설정에 포함되지 않은 서버로부터 온 모든 요청들은 거절된다.
                                 [Value Description]: 해당 Listener에 연결이 허용되는 서버의 IP 주소를 입력한다.
+                            ]]></xs:documentation>
+                            <xs:appinfo>
+                                <metadata>
+                                    <element-level>ADVANCED</element-level>
+                                </metadata>
+                            </xs:appinfo>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="compression" type="compression-Type" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation><![CDATA[
+                            [Description]: 응답을 압축할 대상을 결정하는 설정이다.
+                            압축할 MIME-Type을 설정하며, Servlet이 세팅한 Content-Type 헤더값과 매칭한다.
+                            해당되는 응답은 클라이언트로 전송되기 전에 gzip을 사용해서 압축된다.
+                            MIME-Type 갯수에 제한은 없으나 반드시 1개 이상을 설정해야 한다.
+                            압축 기능은 Accept-Encoding 요청 헤더에 gzip이 있을 때만 적용된다.
+                            또한 output-buffer-size가 0일 때는 적용되지 않는다.
                             ]]></xs:documentation>
                             <xs:appinfo>
                                 <metadata>
@@ -1387,10 +1420,6 @@
                         [Description]:
                         기본적으로 WJP 커넥션 개수를 의미한다.
                         이 설정에 지정된 수만큼 WebtoB와의 연결을 생성하므로 반드시 WebtoB 설정의 MinProc, MaxProc를 바탕으로 해야 한다.
-                        단, <use-nio> 설정에 따라서 의미가 다르므로 주의한다.
-                        <use-nio> 설정이 false인 경우 JEUS 7 Fix#1 이전대로 WJP 커넥션 개수 뿐만 아니라 스레드 수를 의미한다.
-                        <use-nio> 설정이 true인 경우에는 <min> 또는 <max> 설정이 없을 때만 기존과 마찬가지로 스레드 수로 취급한다.
-                        <use-nio>가 true일 때는 WJP 커넥션과 스레드가 서로 분리되어 있으므로 스레드 수를 이 값에 맞춰서 설정할 필요는 없다.
                         [Value Description]: WJP 연결 개수
                         [Dynamic]: 동적 변경이 가능하다.
                     ]]></xs:documentation>
@@ -1449,6 +1478,32 @@
                             <element-level>ADVANCED</element-level>
                         </metadata>
                     </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="compression-Type">
+        <xs:sequence>
+            <xs:element name="max-nonchunked-compression-size" type="positiveIntType" minOccurs="0" default="128">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 압축해야 할 응답의 크기가 큰 경우 memory를 너무 많이 차지하게 될 수 있다.
+                        만약 Servlet이 지정한 content-length 값이 여기에 설정한 크기를 초과하는 경우에는 chunked 응답으로 나간다.
+                        응답 크기는 KB 단위이며, 기본값은 128KB 이다.
+                        [Value Description]: 한번에 압축해서 나가게 되는 응답의 최대 크기 (Servlet이 content-length 지정한 값)
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="mime-type" type="xs:string" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]:
+                        압축 기능을 사용할 mime-type을 지정한다.
+                        반드시 하나 이상의 mime-type을 지정해야 한다.
+                        [Value Description]: mime type
+                    ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -1522,7 +1577,7 @@
 
     <xs:complexType name="encodingType">
         <xs:complexContent>
-            <xs:extension base="appEncodingType">
+            <xs:extension base="webContainerEncodingType">
                 <xs:sequence>
                     <xs:element name="request-url-encoding" type="encodingSubType" minOccurs="0">
                         <xs:annotation>

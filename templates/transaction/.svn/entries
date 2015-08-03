@@ -2,7 +2,7 @@
 
 dir
 698
-svn://192.168.1.134/JEUS7/testenv/tags/fix3/templates/transaction
+svn://192.168.1.134/JEUS7/testenv/trunk/templates/transaction
 svn://192.168.1.134/JEUS7
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2015-08-03T10:49:42.000000Z
+2015-08-03T10:59:42.000000Z
 5f3a44c19f400b82d649ba8eaadbc7d2
 2013-01-25T00:35:50.839653Z
 311

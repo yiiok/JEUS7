@@ -2,7 +2,7 @@
 
 dir
 698
-svn://192.168.1.134/JEUS7/testenv/tags/fix3/setup/RegSetup
+svn://192.168.1.134/JEUS7/testenv/trunk/setup/RegSetup
 svn://192.168.1.134/JEUS7
 
 
@@ -41,7 +41,7 @@ file
 
 
 
-2015-08-03T10:49:00.000000Z
+2015-08-03T10:59:02.000000Z
 b1ecc88720505c5d359c1ab56f32d7c1
 2014-06-24T09:44:26.014908Z
 521

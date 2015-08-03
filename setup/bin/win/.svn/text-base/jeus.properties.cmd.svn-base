@@ -87,16 +87,6 @@ rem For Java applications' compatibility
 rem
 SET TOOL_CLASSPATH=%JEUS_HOME%\lib\client\clientcontainer.jar;%JEUS_HOME%\lib\client\jclient.jar;%JEUS_HOME%\lib\client\jclient_jaxb.jar;%JEUS_HOME%\lib\system\activation.jar;%JEUS_HOME%\lib\system\mail.jar;%JEUS_HOME%\lib\system\javaee.jar;%JEUS_HOME%\lib\system\jms.jar;%JEUS_HOME%\lib\system\jeus-ws.jar;%JEUS_HOME%\lib\system\wsdl4j.jar;%JEUS_HOME%\lib\system\webservices-rt.jar;%JEUS_HOME%\lib\system\jmxremote.jar;%JEUS_HOME%\lib\system\commons-cli.jar;%JEUS_HOME%\lib\system\jeus-parser.jar;%JEUS_HOME%\lib\system\jaxb2-basics-runtime.jar
 
-rem
-rem For NodeManager
-rem
-SET NM_CLASSPATH=%JEUS_HOME%\lib\system\jeus-nodemanager.jar;%JEUS_HOME%\lib\system\jeusapi.jar;%JEUS_HOME%\lib\system\jeusutil.jar;%JEUS_HOME%\lib\system\jeus-network.jar;%JEUS_HOME%\lib\system\jmxremote.jar;%JEUS_HOME%\lib\system\jeusjaxb.jar;%JEUS_HOME%\lib\system\jmx-description.jar;%JEUS_HOME%\lib\system\javaee.jar;%JEUS_HOME%\lib\system\tmaxjce_jdk15x.jar;%JEUS_HOME%\lib\system\commons-cli.jar
-
-rem
-rem For Launcher
-rem
-SET LAUNCHER_CLASSPATH=%JEUS_HOME%\lib\system\jeus-launcher.jar;%JEUS_HOME%\lib\system\xalan.jar;%JEUS_HOME%\lib\system\jaxb-impl.jar;%JEUS_HOME%\lib\system\woodstox-core-asl.jar;%JEUS_HOME%\lib\system\xml_resource.jar;%JEUS_HOME%\lib\system\commons-cli.jar;%JEUS_HOME%\lib\system\jaxb2-basics-runtime.jar;%JEUS_HOME%\lib\system\javaee.jar;%JEUS_HOME%\lib\system\tmaxjce_jdk15x.jar
-
 
 rem If VM_TYPE is not set, determine it.
 IF "%JAVA_VENDOR%" == "Sun" (

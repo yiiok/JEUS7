@@ -39,6 +39,18 @@
                     ]]></xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="classloading" type="classloadType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 애플리케이션 수행 시 필요한 클래스 로딩에 관한 설정을 한다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 
@@ -61,4 +73,21 @@
             <xs:group ref="library-ref-group"/>
         </xs:sequence>
     </xs:group>
+    <xs:complexType name="classloadType">
+        <xs:sequence>
+            <xs:element name="local-lib-first" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클래스를 로딩할 때 애플리케이션에 지정된 클래스 패스 내에서 먼저 찾을 것인지 여부를 설정한다.
+                        true로 설정할 경우 중복된 클래스로 인한 ClassCastException을 주의해야 한다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

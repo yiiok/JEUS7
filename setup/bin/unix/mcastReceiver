@@ -39,5 +39,4 @@ echo "***************************************************************"
 # execute jeus with echo
 set -x
 "${JAVA_HOME}/bin/java" -classpath "${JEUS_HOME}/lib/client/mcast-test.jar" \
-    -Djava.net.preferIPv4Stack=true                                         \
     com.tmax.jeus.multicast.MulticastReceiver $*

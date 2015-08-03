@@ -22,6 +22,9 @@ ECHO ***************************************************************************
 SET USER_NAME=
 SET USERPASSWORD=
 SET URL=
+SET DEBUG=
+SET VERBOSE=
+SET CACHELOGIN=
 
 :BEFORE
 if "%1" == "" GOTO NEXT
@@ -40,6 +43,21 @@ if "%1" == "" GOTO NEXT
 	  	    SET USERPASSWORD=%2
 	  )
 	)
+	if "%1" == "-debug" (
+        if NOT DEFINED DEBUG (
+            SET DEBUG="-debug"
+      )
+    )
+    if "%1" == "-verbose" (
+        if NOT DEFINED VERBOSE (
+            SET VERBOSE="-verbose"
+      )
+    )
+    if "%1" == "-cachelogin" (
+        if NOT DEFINED CACHELOGIN (
+            SET CACHELOGIN="-cachelogin"
+      )
+    )
 	SHIFT
 GOTO BEFORE
 :NEXT
@@ -77,6 +95,6 @@ REM execute jeusadmin
     -Djava.util.logging.config.file="%JEUS_HOME%\bin\logging.properties" ^
     %JAVA_ARGS% ^
     %BOOTSTRAPPER% ^
-    jeus.tool.console.console.ConsoleMain local-shutdown -host %URL% %BOOT_PARAMETER%
+    jeus.tool.console.console.ConsoleMain local-shutdown -host %URL% %BOOT_PARAMETER% %DEBUG% %VERBOSE% %CACHELOGIN%
 
 ENDLOCAL

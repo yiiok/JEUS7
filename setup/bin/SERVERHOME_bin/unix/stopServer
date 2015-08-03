@@ -44,6 +44,9 @@ HOST=""
 PORT=""
 USER_NAME=""
 USERPASSWORD=""
+DEBUG=""
+VERBOSE=""
+CACHELOGIN=""
 
 # argument parsing
 until [ $# -eq 0 ]
@@ -60,6 +63,18 @@ do
     then
         USERPASSWORD="$2"
     fi
+    if [ "$1" = "-debug" ]
+    then
+        DEBUG="${DELEMETER}$1"
+    fi
+    if [ "$1" = "-verbose" ]
+    then
+        VERBOSE="${DELEMETER}$1"
+    fi
+    if [ "$1" = "-cachelogin" ]
+    then
+        CACHELOGIN="${DELEMETER}$1"
+    fi
     shift
 done
 
@@ -68,14 +83,14 @@ BOOT_PARAMETER=""
 
 if [ -z "${USER_NAME}" ]
 then
-    USER_NAME="${DELEMETER}-u"
+    USER_NAME=""
 else
     USER_NAME="${DELEMETER}-u${DELEMETER}${USER_NAME}"
 fi
 
 if [ -z "${USERPASSWORD}" ]
 then
-    USERPASSWORD="${DELEMETER}-p"
+    USERPASSWORD=""
 else
     USERPASSWORD="${DELEMETER}-p${DELEMETER}${USERPASSWORD}"
 fi
@@ -104,4 +119,4 @@ fi
      -Djava.util.logging.config.file="${JEUS_HOME}/bin/logging.properties"        \
      ${JAVA_ARGS}                                                                 \
      ${BOOTSTRAPPER}                                                              \
-     jeus.tool.console.console.ConsoleMain ${DELEMETER}local-shutdown${HOST}${BOOT_PARAMETER}
+     jeus.tool.console.console.ConsoleMain ${DELEMETER}local-shutdown${HOST}${BOOT_PARAMETER}${VERBOSE}${DEBUG}${CACHELOGIN}

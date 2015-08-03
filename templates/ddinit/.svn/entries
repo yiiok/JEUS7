@@ -2,7 +2,7 @@
 
 dir
 698
-svn://192.168.1.134/JEUS7/testenv/tags/fix3/templates/ddinit
+svn://192.168.1.134/JEUS7/testenv/trunk/templates/ddinit
 svn://192.168.1.134/JEUS7
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2015-08-03T10:49:42.000000Z
+2015-08-03T10:59:43.000000Z
 673fd3018e45bd0e6d3d9385d99ef298
 2013-07-09T06:56:25.942955Z
 412

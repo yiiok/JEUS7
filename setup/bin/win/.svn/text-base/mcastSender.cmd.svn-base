@@ -20,8 +20,7 @@ ECHO **************************************************************
 REM execute jeus with echo
 @echo on
 "%JAVA_HOME%\bin\java" -classpath "%JEUS_HOME%\lib\client\mcast-test.jar" ^
-    -Djava.net.preferIPv4Stack=true ^
-    com.tmax.jeus.multicast.MulticastSender %*
+com.tmax.jeus.multicast.MulticastSender %*
 @echo off
 
 ENDLOCAL

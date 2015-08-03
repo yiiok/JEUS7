@@ -2,7 +2,6 @@
 <xs:schema
         xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
         targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
-        xmlns:j2ee="http://java.sun.com/xml/ns/j2ee"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified"
@@ -17,17 +16,17 @@
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="0"/>
             <xs:element name="time-to-live" type="timestampType" minOccurs="0"/>
-            <xs:element name="forward-retry" type="forward-retryType" minOccurs="0"/>
+            <xs:element name="dispatch-retry" type="dispatch-retryType" minOccurs="0"/>
             <xs:element name="reconnect" type="reconnectType" minOccurs="0"/>
             <xs:element name="store" type="persistence-storeType" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="forward-retryType">
+    <xs:complexType name="dispatch-retryType">
         <xs:sequence>
-            <xs:element name="forward-retry-limit" type="retryLimitType" minOccurs="0"/>
-            <xs:element name="forward-retry-interval" type="timestampType" minOccurs="0"/>
-            <xs:element name="forward-retry-increment" type="timestampType" minOccurs="0"/>
+            <xs:element name="dispatch-retry-limit" type="retryLimitType" minOccurs="0"/>
+            <xs:element name="dispatch-retry-interval" type="timestampType" minOccurs="0"/>
+            <xs:element name="dispatch-retry-increment" type="timestampType" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
