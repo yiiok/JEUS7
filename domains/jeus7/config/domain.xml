@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <domain xmlns="http://www.tmaxsoft.com/xml/ns/jeus" version="7.0">
 	<production-mode>false</production-mode>
-	<id>1816501507</id>
+	<id>1385516804</id>
 	<admin-server-name>server1</admin-server-name>
 	<security-manager>
 		<connect-retries>0</connect-retries>
