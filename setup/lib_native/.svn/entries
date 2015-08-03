@@ -1,0 +1,91 @@
+9
+
+dir
+698
+svn://192.168.1.134/JEUS7/testenv/trunk/setup/lib_native
+svn://192.168.1.134/JEUS7
+
+
+
+2015-05-06T04:13:33.539948Z
+623
+taeju
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+7f48ebd0-a69d-4209-8a53-292b74657389
+
+aix5l_32
+dir
+
+aix5l_64
+dir
+
+aix7l_32
+dir
+
+aix7l_64
+dir
+
+hp-ux_32
+dir
+
+hp-ux_64
+dir
+
+hp-ux_ia64_32
+dir
+
+hp-ux_ia64_64
+dir
+
+linux_ia64
+dir
+
+linux_ppc_32
+dir
+
+linux_ppc_64
+dir
+
+linux_x86_32
+dir
+
+linux_x86_64
+dir
+
+mac
+dir
+
+sunos_32
+dir
+
+sunos_64
+dir
+
+sunos_x64
+dir
+
+sunos_x86
+dir
+
+win32
+dir
+
+win64
+dir
+
+zLinux_64
+dir
+

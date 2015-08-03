@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:include schemaLocation="jeus-common.xsd"/>
+
+    <xs:element name="nodes" type="nodesType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                        [Description]: 노드들을 정의한다.
+            ]]></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="nodesType">
+        <xs:sequence>
+            <xs:element name="node" type="nodeType" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                                [Description]: 노드를 정의한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="nodeType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:token" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 노드에 대한 유일한 노드 이름을 정의한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="host" type="xs:token" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 노드의 호스트 이름을 정의한다.
+                        [Example]: 192.168.1.xxx
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice maxOccurs="1">
+                <xs:element name="ssh" type="sshType" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation><![CDATA[
+                            [Description]: 해당 노드의 SSH 설정을 정의한다.
+                        ]]></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="java" type="javaType" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation><![CDATA[
+                            [Description]: 해당 노드의 Java 타입의 노드매니저 설정을 정의한다.
+                        ]]></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="sshType">
+        <xs:sequence>
+            <xs:element name="install-dir" type="xs:token" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 노드의 JEUS 설치 디렉터리를 정의한다.
+                        [Example]: /home/user/jeus
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="nonNegativeIntType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 SSH 노드의 포트 번호를 설정한다. 기본값으로 22번 포트를 사용한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="user" type="xs:token" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 SSH 노드의 인증에 사용될 User의 이름을 설정한다. 기본값으로 System User 이름을 사용한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="private-key-file" type="xs:token" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 SSH 노드의 인증에 사용될 개인 키 파일을 설정한다. 기본값으로 System User Home 하위의 "/.ssh/id_rsa"를 사용한다.
+                        [Example]: /home/user/.ssh/id_rsa
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="javaType">
+        <xs:sequence>
+            <xs:element name="port" type="nonNegativeIntType" minOccurs="0" default="7730">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니저에서 사용할 port를 설정한다. default는 7730을 사용한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="use-ssl" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니저에서 ssl를 사용할 지 여부를 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="truststore-path" type="xs:token" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니저에서 ssl를 사용할 때 인증에 사용될 truststore 파일경로를 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="truststore-password" type="xs:token" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 노드매니저에서 ssl를 사용할 때 인증에 사용될 truststore 파일의 password를 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

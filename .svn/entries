@@ -1,0 +1,86 @@
+9
+
+dir
+698
+svn://192.168.1.134/JEUS7/testenv/trunk
+svn://192.168.1.134/JEUS7
+
+
+
+2015-07-30T06:43:47.992385Z
+697
+taeju
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+7f48ebd0-a69d-4209-8a53-292b74657389
+
+ThirdPartyLicenses.txt
+file
+
+
+
+
+2015-08-03T10:11:10.000000Z
+23113c624538cd572696fba22befd536
+2009-09-14T07:01:29.394459Z
+14
+leechigon
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+114
+
+applications
+dir
+
+derby
+dir
+
+docs
+dir
+
+lib
+dir
+
+license
+dir
+
+nodemanager
+dir
+
+setup
+dir
+
+templates
+dir
+

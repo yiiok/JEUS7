@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:include schemaLocation="jeus-common.xsd"/>
+    <xs:include schemaLocation="jeus-store.xsd"/>
+
+    <xs:element name="lpq-agent" type="lpq-agentType"/>
+
+    <xs:complexType name="lpq-agentType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="time-to-live" type="timestampType" minOccurs="0"/>
+            <xs:element name="dispatch-retry" type="dispatch-retryType" minOccurs="0"/>
+            <xs:element name="reconnect" type="reconnectType" minOccurs="0"/>
+            <xs:element name="store" type="persistence-storeType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="dispatch-retryType">
+        <xs:sequence>
+            <xs:element name="dispatch-retry-limit" type="retryLimitType" minOccurs="0"/>
+            <xs:element name="dispatch-retry-interval" type="timestampType" minOccurs="0"/>
+            <xs:element name="dispatch-retry-increment" type="timestampType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="reconnectType">
+        <xs:sequence>
+            <xs:element name="reconnect-retry-limit" type="retryLimitType" minOccurs="0"/>
+            <xs:element name="reconnect-retry-interval" type="timestampType" minOccurs="0"/>
+            <xs:element name="reconnect-sleep-time" type="timestampType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="persistence-storeType">
+        <xs:choice minOccurs="1">
+            <xs:element name="journal-store" type="journal-storeType" minOccurs="1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:simpleType name="retryLimitType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="-1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="timestampType">
+        <xs:restriction base="xs:long">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

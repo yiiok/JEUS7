@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:j2ee="http://java.sun.com/xml/ns/j2ee"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:include schemaLocation="jeus-common.xsd"/>
+    <xs:include schemaLocation="jeus-store.xsd"/>
+
+    <xs:complexType name="jms-activeType">
+        <xs:sequence>
+            <xs:element name="listen-transport-url" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated .
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="check-health-response-timeout" type="xs:long" minOccurs="0" maxOccurs="1" default="5000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Failover를 하기 전에 그 대상의 생존 여부를 한 번 더 확인할 때 기다리는 시간을 설정한다. 이 시간이 지나면
+                        실제 Failover가 시작된다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-standbyType">
+        <xs:sequence>
+            <xs:element name="active-transport-url" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated .
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="check-health-response-timeout" type="xs:long" minOccurs="0" maxOccurs="1" default="5000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Failover할 때 Active의 Health 상태를 검사하기 위해 메시지를 보내고 이에 대한 응답이 오기를 기다리는 시간을 설정한다.
+                        이 시간이 지나면 Active는 Healthy 상태가 아닌 것으로 판단한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="discovery-response-timeout" type="xs:long" minOccurs="0" maxOccurs="1" default="5000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated .
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="start-up-max-try-count" type="xs:int" minOccurs="0" maxOccurs="1" default="-1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated .
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fail-over-max-try-count" type="xs:int" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Active Broker의 Failure가 감지된 후 Standby Broker가 Active Broker를 찾기 위해 이 수만큼 메시지를 보냈지만 모두 실패할 경우
+                        Standby Broker는 Active Broker가 죽었다고 판단하고 Failover를 진행한다. 기본값은 0으로, Active가 죽었다고 판단되면 바로 Recovery를 진행한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="auto-switchover" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated .
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-fail-overType">
+        <xs:choice>
+            <xs:element name="active" type="jms-activeType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Broker가 Active이면서 Failover를 사용하기 위한 설정이다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="standby" type="jms-standbyType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Broker가 Failover의 Standby 역할을 할 경우를 위한 설정이다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="jms-resourceType">
+        <xs:sequence>
+            <xs:element name="destination" type="destinationType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination에 대한 정보를 지정한다.
+                        [Dynamic]: Destination은 동적으로 추가 및 삭제가 가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="durable-subscriber" type="durable-subscriberType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Durable subscriber에 대한 정보를 지정한다.
+                        [Non-Dynamic]: Durable subscriber는 동적으로 추가 및 삭제가 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-serverType">
+        <xs:sequence>
+            <xs:element name="broker-name" type="valuableToken" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated .
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="service-config" type="service-config" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시징 서비스를 제공하기 위한 서비스 채널에 대한 설정이다. 최소한 하나 이상 설정되어야 한다.
+                        [Dynamic]: 동적으로 추가할 수 있다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="fail-over" type="jms-fail-overType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시징 서비스에 Failover 기능을 추가하기 위한 설정이다.
+                        [Non-Dynamic]: Failover 설정은 동적으로 변경할 수 없다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="thread-pool" type="jms-thread-poolType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]:JMS 메시지 Broker가 사용하는 Thread pool에 대한 설정이다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="connection-factory" type="connection-factoryType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                    [Description]: Connection Factory에 대한 정보를 지정한다.
+                    [Dynamic]: Connection Factory는 동적으로 추가 및 삭제가 가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="persistence-store" type="jms-persistence-storeType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Persistent object들을 위한 Store 정보를 설정한다.
+                        Persistent Object에는 Destination, DurableSubscription, Message, Subscription, Transaction이 있다.
+                        [Non-Dynamic]: Persistent Store 설정은 동적으로 변경이 불가능하다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="message-sort" type="message-sortType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시지 정렬을 위한 설정을 정의한다.
+                        [Non-Dynamic]: 동적으로 변경이 불가능하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-journal-storeType">
+        <xs:complexContent>
+            <xs:extension base="journal-storeType">
+                <xs:sequence>
+                    <xs:element name="destination-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation><![CDATA[
+                                [Description]: Destination 테이블 이름을 변경한다.
+                              ]]></xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="durable-subscription-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation><![CDATA[
+                                [Description]: Durable Subscription 테이블 이름을 변경한다.
+                              ]]></xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="jms-jdbc-storeType">
+        <xs:sequence>
+            <xs:element name="data-source" type="valuableToken" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: DB의 데이터소스를 설정한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="destination-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination 테이블 이름을 변경한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="durable-subscription-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Durable Subscription 테이블 이름을 변경한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시지 테이블 이름을 변경한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="subscription-message-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Subscription 테이블 이름을 변경한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="transaction-table" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 트랜잭션 테이블 이름을 변경한다.
+                      ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-persistence-storeType">
+        <xs:choice>
+            <xs:element name="journal" type="jms-journal-storeType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="jdbc" type="jms-jdbc-storeType" minOccurs="0" maxOccurs="1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="message-sortType">
+        <xs:sequence>
+            <xs:element name="name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [ID]: ID
+                        [Description]: 메시지 정렬 설정의 이름이다. Queue나 Durable subscription 설정에 명시하면 이 설정이 적용된다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="key" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시지 정렬을 위한 key 값이다. JMS 메시지 header의 "JMS"로 시작하는 프로퍼티나 임의의 User 프로퍼티를 사용할 수 있다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="type" type="key-typeType">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시지 정렬을 위한 key 값의 타입을 설정한다. Predefined 프로퍼티에 대해서는 설정할 필요가 없다.
+                        Boolean, Byte, Float, Integer, Double, String만 설정할 수 있고, 기본값은 String이다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="direction" type="sort-directionType">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 메시지 정렬을 위한 Direction값이다. Ascending이나 Descending을 사용할 수 있다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="key-typeType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="Boolean"/>
+            <xs:enumeration value="Byte"/>
+            <xs:enumeration value="Float"/>
+            <xs:enumeration value="Integer"/>
+            <xs:enumeration value="Double"/>
+            <xs:enumeration value="String"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="sort-directionType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="ascending"/>
+            <xs:enumeration value="descending"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="service-config">
+        <xs:sequence>
+            <xs:element name="name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [ID]: ID
+                        [Description]: 서비스 채널의 이름을 설정한다. Connection Factory에 채널 정보를 지정하기 위해 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice>
+                <xs:element name="listener-name" type="valuableToken" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation><![CDATA[
+                        [Description]: 서비스 채널의 Listener를 지정한다. 서버에 이미 존재하는 설정들에 있는 이름을 설정한다.
+                        설정하지 않으면 Base-listener가 선택된다.
+                    ]]></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="virtual-listener" type="virtual-listenerType">
+                    <xs:annotation>
+                        <xs:documentation><![CDATA[
+                        [Description]: Virtual Listener를 지정한다. 실제로 존재하지 않는 주소를 외부 환경의 필요에 따라 지정할 때 사용한다.
+                    ]]></xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:choice>
+            <xs:element name="client-limit" type="nonNegativeIntType" minOccurs="0" default="1000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서비스 채널이 허용하는 최대 클라이언트 수를 지정한다.
+                        Blocking socket을 사용할 경우 메시지 Broker에 설정된 최대 스레드 수를 넘을 수 없다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="check-security" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트가 수행하는 동작에 대한 권한 검사의 진행 여부를 결정한다.
+                        true로 설정하면 jeus.jms.client.connectionFactory에 대한 createConnection 권한이 있는 사용자만
+                        이 서비스 채널로의 커넥션을 생성할 수 있고, jeus.jms.destination.creation에 대한 createDestination 권한이 있는 사용자만
+                        실행 중인 JMS 메시지 Broker에 동적으로 Destination을 생성할 수 있다.
+                  ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="client-keepalive-timeout" type="xs:int" minOccurs="0" default="30">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트와의 연결이 비정상 종료되었을 경우 재접속을 기다리는 시간이다. 설정한 시간이 지나면
+                        해당 클라이언트의 리소스는 모두 서버에 반환된다. 설정된 시간 내에는 해당 클라이언트의 clientID 값이 유지되므로
+                        네트워크 상태가 불량한 경우에만 설정한다.
+                        초 단위로 설정하며 0 이하의 값을 지정하면 기다리지 않고 즉시 리소스를 반환한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="backup-service-url" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                    [Description]: @Deprecated. 백업 서비스 채널의 URL을 지정한다. Active의 백업은 Standby이고 Standby의 백업은 Active이다.
+                ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="virtual-listenerType">
+        <xs:sequence>
+            <xs:element name="server-address" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서비스 채널의 IP 주소를 설정한다. Connection Factory의 주소로 사용된다.
+                        [Example]: 123.123.123.123
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="nonNegativeIntType">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 서비스 채널의 TCP 포트 번호를 설정한다.
+                        [Example]: 9741
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="connection-factoryType">
+        <xs:sequence>
+            <xs:element name="type" type="factory-typeType" minOccurs="0" default="nonxa">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Connection Factory의 종류를 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [ID]: ID
+                        [Description]: JMS 시스템 내에서 관리의 목적으로 사용되는 Connection Factory의 이름이다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="service" type="valuableToken" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Connection Factory가 연결을 시도할 서비스의 이름을 설정한다. Service Config에 지정된 이름을 사용한다.
+                        이름을 지정하지 않을 경우 처음 설정된 서비스로 임의 지정된다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+                <xs:unique name="factory-service-config-name">
+                    <xs:selector xpath="xs:jms-server/service-config"/>
+                    <xs:field xpath="name"/>
+                </xs:unique>
+            </xs:element>
+            <xs:element name="export-name" type="valuableToken" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Connection Factory가 Naming Server에 바인딩되는 이름을 설정한다. 설정하지 않으면 Name 속성이 그대로 사용된다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="client-id" type="valuableToken" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Connection Factory를 이용하여 생성되는 커넥션에 기본값으로 설정되는 Client Id 값이다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fixed-client-id" type="xs:boolean" minOccurs="0" default="true">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: ConnectionID의 생성 정책을 설정한다. true일 경우 지정된 Client Id를 그대로 사용하며
+                        false인 경우 JMS 메시지 Broker에 의해 자동으로 생성된다.
+                        생성된 ConnectionID는 getClientID() API를 이용하여 확인할 수 있다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="broker-selection-policy" type="broker-selection-policyType" minOccurs="0" default="round-robin">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: ConnectionFactory가 커넥션을 생성할 때 어떤 채널을 선택할지를 결정하는 정책이다. Round Robin, Random 중에 선택할 수 있다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="request-blocking-time" type="xs:long" minOccurs="0" default="200000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트에서 서버로 요청을 보낼 경우 응답이 올 때까지 기다리는 시간을 설정한다. 이 시간이 지나면
+                                       클라이언트에 JMSException을 throw하며 Block이 해제된다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reconnect-enabled" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트와 서버의 연결이 끊어질 경우 Reconnect 수행 여부를 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reconnect-period" type="xs:long" minOccurs="0" default="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트와 서버의 연결이 끊어질 경우 Reconnect를 시도할 최대시간을 설정한다.
+                                       설정한 시간 동안 Reconnect가 되지 않으면 모든 요청은 취소되고 JMSException을 throw한다.
+                                       이 시간은 Request Blocking Time보다 항상 커야 한다. 작을 경우 Request Blocking Time으로
+                                       대체된다.
+                                       기본값은 0으로, 무한을 의미한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reconnect-interval" type="xs:long" minOccurs="0" default="5000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트와 서버의 연결이 끊어질 경우 재연결을 시도할 때의 시간 간격을 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="thread-pool" type="jms-thread-poolType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated. Connection Factory의 Thread pool은 min 10, max 100으로 고정되어있다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="destination-typeType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="queue"/>
+            <xs:enumeration value="topic"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="factory-typeType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="nonxa"/>
+            <xs:enumeration value="xa"/>
+            <xs:enumeration value="queue"/>
+            <xs:enumeration value="topic"/>
+            <xs:enumeration value="xaqueue"/>
+            <xs:enumeration value="xatopic"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="broker-selection-policyType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="round-robin"/>
+            <xs:enumeration value="random"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="destinationType">
+        <xs:sequence>
+            <xs:element name="type" type="destination-typeType">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Destination의 종류를 설정한다. Queue와 Topic 중 하나를 지정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [ID]: ID
+                        [Description]: JMS 메시지 Broker 내에서 관리 목적으로 사용되는 Destination의 이름을 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="export-name" type="valuableToken" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Destination이 Naming Server에 바인딩되는 이름을 설정한다. 설정하지 않으면 Name 속성이 그대로 사용된다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="multiple-receiver" type="xs:boolean" minOccurs="0" default="true">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Queue 타입의 Destination에 대해 다중의 Receiver를 허용하여 분산처리를 할 것인지를 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="consumer-limit" type="positiveIntType" minOccurs="0" default="1024">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination에 접근할 수 있는 Consumer의 수를 제한한다.
+                        [Non-Dynamic]: TODO 추후에 변경 가능하도록 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="limit" type="nonNegativeIntType" minOccurs="0" default="134217728">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 해당 Destination에서 사용할 수 있는 최대 메모리 크기를 설정한다.
+                        사용 중인 메모리가 이 값을 초과하는 경우 클라이언트의 메시지 전달은 바로 에러 처리된다. 기본값은 128MBytes
+                        [Non-Dynamic]: TODO 추후에 변경 가능하도록 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="high-mark" type="nonNegativeIntType" minOccurs="0" default="100663296">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Flow Control을 사용하기 시작하는 메모리 크기를 설정한다. 기본값은 96MBytes
+                        [Non-Dynamic]: TODO 추후에 변경 가능하도록 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="low-mark" type="nonNegativeIntType" minOccurs="0" default="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: @Deprecated. Soft Caching을 시작하는 메모리 크기를 설정한다.
+                        [Non-Dynamic]: TODO 추후에 삭제하도록 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="max-pending-limit" type="nonNegativeIntType" minOccurs="0" default="128">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Queue나 Topic에 MessageListener가 등록되어 있는 경우 Destination에
+                        메시지가 도착한 직후 Consumer로 메시지가 보내지므로 클라이언트가 이 메시지들을 빨리 처리하지
+                        않으면 클라이언트 메모리에 쌓이게 되어 OutOfMemory 에러가 발생할 수 있다.
+                        DISPATCH는 되었지만 ACKNOWLEDGE를 수신하지 않은 메시지의 최대 허용범위를 지정하여 이런 문제를
+                        방지할 수 있다.
+                        [Non-Dynamic]: TODO 추후에 변경 가능하도록 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="resume-dispatch-factor" type="xs:float" minOccurs="0" default="0.4">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Pending 메시지가 Max Pending Limit보다 크게 되면 메시지 전달은 일시적으로 중단된다.
+                        클라이언트가 메시지를 완전히 처리한 후 ACKNOWLEDGE들을 보내어 Pending된 메시지의 수가
+                        (Max Pending Limit * Resume Dispatch Factor) 작거나 같으면 dispatch는 다시 시작한다.
+                        [Non-Dynamic]: TODO 추후에 변경 가능하도록 한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message-sort" type="valuableToken" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination에 적용할 메시지 sort 설정을 정의한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message-group" type="message-groupType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination에 적용할 메시지 그룹 설정을 정의한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="dead-letter-destination" type="valuableToken" minOccurs="0" default="JEUSMQ_DLQ">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 이 Destination에서 정상적으로 처리되지 못한 메시지들을 보관할 Destination의 이름이다.
+                        기본값인 JEUSMQ_DLQ는 시스템에서 제공하는 Queue이며 따로 설정하지 않아도 자동으로 생성된다.
+                        만약 설정된 Destination이 존재하지 않는다면 기본값으로 대체된다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="expiration-policy" type="expiration-policyType" minOccurs="0" default="Delete">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 이 Destination에서 전달되지 못하고 만료된 메시지들을 처리할 방법을 설정한다.
+                        (Delete: 만료된 메시지를 삭제, Redirect: 만료된 메시지를 dead-letter-destination으로 재전송)
+                        기본값은 Delete이다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="redelivery-delay" type="positiveLongType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Transaction rollback 혹은 Recover된 메시지가 재전송되기까지의 지연시간을 설정한다.
+                        단위는 ms.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="override-client-attributes" type="override-client-attributesType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 이 Destination에 보내지는 메시지들에 한해서 클라이언트 프로그래밍에 의해서 설정되는 값들에 우선하여
+                        이 설정값들을 적용시킨다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="expiration-policyType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="Delete"/>
+            <xs:enumeration value="Redirect"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="override-client-attributesType">
+        <xs:sequence>
+            <xs:element name="expiration-time" type="positiveLongType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: MessageProducer에 의해 정의된 timeToLive (expiration-time) 설정에 우선하여 이 값을 적용시킨다.
+                        단위는 ms이다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="durable-subscriberType">
+        <xs:sequence>
+            <xs:element name="client-id" type="xs:token">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클라이언트를 식별하는 값을 설정한다.
+                        Connection Factory 내에서 뿐만 아니라 Durable Subscriber 항목의 모든 Client Id 값들 중에서 중복 되어서는 안된다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [ID]: ID
+                        [Description]: JMS 메시지 Broker 내에서 관리 목적으로 사용되는 Durable Subscriber의 이름을 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="destination-name" type="valuableToken">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Durable Subscriber가 메시지를 받고자 하는 Destination의 이름을 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message-selector" type="xs:token" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Durable Subscriber의 Message selector를 설정한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="message-sort" type="valuableToken" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Durable subscriber에 적용할 메시지 정렬 설정을 정의한다.
+                        [Non-Dynamic]:
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="jms-thread-poolType">
+        <xs:sequence>
+            <xs:element name="min" type="nonNegativeIntType" minOccurs="0" default="1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Thread pool의 최소 크기를 지정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="max" type="nonNegativeIntType" minOccurs="0" default="100">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Thread pool의 최대 크기를 지정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="keep-alive-time" type="nonNegativeIntType" minOccurs="0" default="300000">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: min 설정 개수를 초과하는 스레드에 대해서 여기에 지정된 시간 동안 사용되지 않은 스레드는 소멸된다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="message-groupType">
+        <xs:sequence>
+            <xs:element name="message-handling" type="message-handlingType" minOccurs="0" default="pass">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination이 메시지 그룹을 어떻게 다룰 것인지 정의한다. Pass와 Gather를 설정할 수 있다.
+                        Pass는 일반 메시지와 동일하게 취급한다. Gather는 메시지 그룹을 완성시켜서 하나의 메시지로 전달한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="expiration-time" type="xs:long" minOccurs="0" default="-1">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: Destination에 완성되지 않은 메시지 그룹이 최대 얼마 동안 존재할 수 있는지 밀리세컨드 단위로 정의한다.
+                        기본값은 -1로, 완성될 때까지 없어지지 않는다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="message-handlingType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="pass"/>
+            <xs:enumeration value="gather"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

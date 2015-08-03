@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jeus-ejb-dd xmlns="http://www.tmaxsoft.com/xml/ns/jeus">
+    <module-info/>
+    <beanlist>
+        <jeus-bean>
+            <ejb-name>SessionBean</ejb-name>
+            <export-name>interceptor_dd_exp</export-name>
+        </jeus-bean>
+        <jeus-bean>
+            <ejb-name>MDBBean</ejb-name>
+            <connection-factory-name>basic/QueueCF</connection-factory-name>
+            <destination>queue/Example1</destination>
+        </jeus-bean>
+        <jeus-bean>
+            <ejb-name>MDBBeanExcluded</ejb-name>
+            <connection-factory-name>basic/QueueCF</connection-factory-name>
+            <destination>queue/Example2</destination>
+        </jeus-bean>
+    </beanlist>
+</jeus-ejb-dd>

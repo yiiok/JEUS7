@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<libraries xmlns="http://www.tmaxsoft.com/xml/ns/jeus" version="7.0">
+    <!-- DO NOT MODIFY JSF and JSTL libraries!!! -->
+    <library>
+        <library-name>jsf</library-name>
+        <specification-version>1.2</specification-version>
+        <implementation-version>1.2.15</implementation-version>
+        <files dir="jsf_ri_1.2"/>
+    </library>
+    <library>
+        <!-- JSF 2.1 is Maintenance Release 2 of JSF 2.0 -->
+        <library-name>jsf</library-name>
+        <specification-version>2.1</specification-version>
+        <implementation-version>2.1.3</implementation-version>
+        <files dir="jsf_ri_2.1"/>
+    </library>
+    <library>
+        <library-name>jsf-jeusport</library-name>
+        <files dir=".">
+            <include name="jsf-injection-provider.jar"/>
+            <include name="jsf-weld-integration.jar"/>
+        </files>
+    </library>
+    <library>
+        <library-name>jstl</library-name>
+        <specification-version>1.2</specification-version>
+        <implementation-version>1.2</implementation-version>
+        <files dir="jstl_1.2"/>
+    </library>
+    <!--library>
+        <library-name>hibernate-validator</library-name>
+        <specification-version>1.0</specification-version>
+        <implementation-version>4.0.2.GA</implementation-version>
+        <files dir="hibernate-validator_4.0.2.GA"/>
+    </library-->
+    <library>
+        <library-name>hibernate-validator</library-name>
+        <specification-version>1.0</specification-version>
+        <implementation-version>4.3.1.Final</implementation-version>
+        <files dir="hibernate-validator_4.3.1.Final"/>
+    </library>
+
+    <!-- Add user libraries from here -->
+
+
+</libraries>

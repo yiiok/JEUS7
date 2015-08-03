@@ -1,0 +1,58 @@
+9
+
+dir
+698
+svn://192.168.1.134/JEUS7/testenv/trunk/lib
+svn://192.168.1.134/JEUS7
+
+
+
+2015-07-30T06:43:47.992385Z
+697
+taeju
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+7f48ebd0-a69d-4209-8a53-292b74657389
+
+client
+dir
+
+datasource
+dir
+
+endorsed
+dir
+
+etc
+dir
+
+licenses
+dir
+
+schemas
+dir
+
+shared
+dir
+
+system
+dir
+
+systemapps
+dir
+
+thirdparty
+dir
+

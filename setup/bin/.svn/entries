@@ -1,0 +1,40 @@
+9
+
+dir
+698
+svn://192.168.1.134/JEUS7/testenv/trunk/setup/bin
+svn://192.168.1.134/JEUS7
+
+
+
+2015-07-07T09:59:56.954116Z
+664
+taeju
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+7f48ebd0-a69d-4209-8a53-292b74657389
+
+DOMAINHOME_bin
+dir
+
+SERVERHOME_bin
+dir
+
+unix
+dir
+
+win
+dir
+

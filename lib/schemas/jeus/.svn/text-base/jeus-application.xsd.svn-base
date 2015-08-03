@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        xmlns="http://www.tmaxsoft.com/xml/ns/jeus"
+        targetNamespace="http://www.tmaxsoft.com/xml/ns/jeus"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified"
+        version="7.0">
+
+    <xs:include schemaLocation="jeus-common.xsd"/>
+
+    <xs:element name="application" type="applicationType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+                [Description]: jeus-application-dd.xml의 설정 항목이다.
+            ]]></xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="applicationType">
+        <xs:sequence>
+            <xs:group ref="application-propertyGroup"/>
+            <xs:group ref="jndiEnvironmentMappingGroup"/>
+            <xs:element name="message-destination" type="jndi-refType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                    [Description]: application.xml의 <message-destination>에 선언된 Message Destination과
+                    JNDI에 등록된 실제 Destination객체를 매핑한다.
+                    [Dependency]: message-destination/jndi-info/ref = application/message-destination-ref/message-destination-ref-name
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="deploy-modules-concurrently" type="xs:boolean" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: EAR에 속한 module들에 대해서 concurrent deploy를 수행할지의 여부를 결정한다.
+                        다만 application.xml의 initialize-in-order가 true인 경우에는 이 설정값과 관계 없이 EAR에 속한 module들을 순서대로 deploy한다.
+                        즉 이 설정은 initialize-in-order가 false인 경우에만 유효하다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="classloading" type="classloadType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 애플리케이션 수행 시 필요한 클래스 로딩에 관한 설정을 한다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:group name="application-propertyGroup">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="role-permission" type="rolePermissionType">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 애플리케이션의 모든 모듈에 적용할 Principal Role 매핑을 설정한다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="java-security-permission" type="securityPermissionType">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: JEUS가 J2SE Security를 사용할 때 해당 애플리케이션에게 허용할 J2SE Permission을 지정할 수 있다.
+                    ]]></xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:group ref="library-ref-group"/>
+        </xs:sequence>
+    </xs:group>
+    <xs:complexType name="classloadType">
+        <xs:sequence>
+            <xs:element name="local-lib-first" type="xs:boolean" minOccurs="0" default="false">
+                <xs:annotation>
+                    <xs:documentation><![CDATA[
+                        [Description]: 클래스를 로딩할 때 애플리케이션에 지정된 클래스 패스 내에서 먼저 찾을 것인지 여부를 설정한다.
+                        true로 설정할 경우 중복된 클래스로 인한 ClassCastException을 주의해야 한다.
+                    ]]></xs:documentation>
+                    <xs:appinfo>
+                        <metadata>
+                            <element-level>ADVANCED</element-level>
+                        </metadata>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

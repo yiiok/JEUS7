@@ -1,0 +1,52 @@
+9
+
+dir
+698
+svn://192.168.1.134/JEUS7/testenv/trunk/templates
+svn://192.168.1.134/JEUS7
+
+
+
+2015-05-06T04:13:33.539948Z
+623
+taeju
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+7f48ebd0-a69d-4209-8a53-292b74657389
+
+ddinit
+dir
+
+lpq
+dir
+
+nodemanager
+dir
+
+plan
+dir
+
+resource
+dir
+
+security
+dir
+
+servlet
+dir
+
+transaction
+dir
+
